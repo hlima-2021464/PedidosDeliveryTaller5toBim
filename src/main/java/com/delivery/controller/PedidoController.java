@@ -4,7 +4,6 @@ import com.delivery.dto.request.ActualizarEstadoRequest;
 import com.delivery.dto.request.CrearPedidoRequest;
 import com.delivery.dto.response.PedidoResponse;
 import com.delivery.service.PedidoService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity<PedidoResponse> crearPedido(
             @AuthenticationPrincipal UserDetails userDetails,
-            @Valid @RequestBody CrearPedidoRequest request
+            @RequestBody CrearPedidoRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(pedidoService.crearPedido(userDetails.getUsername(), request));
@@ -45,7 +44,7 @@ public class PedidoController {
     public ResponseEntity<PedidoResponse> actualizarEstado(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails,
-            @Valid @RequestBody ActualizarEstadoRequest request
+            @RequestBody ActualizarEstadoRequest request
     ) {
         return ResponseEntity.ok(pedidoService.actualizarEstado(id, request.getEstado(), userDetails.getUsername()));
     }
