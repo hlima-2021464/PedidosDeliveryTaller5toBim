@@ -4,57 +4,43 @@ import com.delivery.dto.request.ActualizarEstadoRequest;
 import com.delivery.dto.request.CrearPedidoRequest;
 import com.delivery.dto.response.PedidoResponse;
 import com.delivery.service.PedidoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/pedidos")
-@RequiredArgsConstructor
 public class PedidoController {
 
     private final PedidoService pedidoService;
 
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
+
     @PostMapping
-    public ResponseEntity<PedidoResponse> crearPedido(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody CrearPedidoRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(pedidoService.crearPedido(userDetails.getUsername(), request));
+    public ResponseEntity<PedidoResponse> crearPedido(@RequestBody CrearPedidoRequest request, Principal principal) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.crearPedido(request, principal.getName()));
     }
 
-    @GetMapping("/mis-pedidos")
-    public ResponseEntity<List<PedidoResponse>> listarMisPedidos(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(pedidoService.listarMisPedidos(userDetails.getUsername()));
+    @GetMapping
+    public ResponseEntity<List<PedidoResponse>> listarPedidos(Principal principal) {
+        return ResponseEntity.ok(pedidoService.listarPedidos(principal.getName()));
     }
 
-    @GetMapping("/disponibles")
-    public ResponseEntity<List<PedidoResponse>> listarPedidosDisponibles() {
-        return ResponseEntity.ok(pedidoService.listarPedidosDisponibles());
+    @GetMapping("/{id}")
+    public ResponseEntity<PedidoResponse> obtenerPedidoPorId(@PathVariable Long id, Principal principal) {
+        return ResponseEntity.ok(pedidoService.obtenerPedidoPorId(id, principal.getName()));
     }
 
-    @PATCH
     @PatchMapping("/{id}/estado")
     public ResponseEntity<PedidoResponse> actualizarEstado(
             @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody ActualizarEstadoRequest request
-    ) {
-        return ResponseEntity.ok(pedidoService.actualizarEstado(id, request.getEstado(), userDetails.getUsername()));
-    }
-
-    @PATCH
-    @PatchMapping("/{id}/cancelar")
-    public ResponseEntity<PedidoResponse> cancelarPedido(
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        return ResponseEntity.ok(pedidoService.cancelarPedido(id, userDetails.getUsername()));
+            @RequestBody ActualizarEstadoRequest request,
+            Principal principal) {
+        return ResponseEntity.ok(pedidoService.actualizarEstado(id, request.getEstado(), principal.getName()));
     }
 }
