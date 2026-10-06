@@ -7,7 +7,6 @@ import com.delivery.entity.Comercio;
 import com.delivery.entity.Producto;
 import com.delivery.service.ComercioService;
 import com.delivery.service.ProductoService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,7 @@ public class ComercioController {
     }
 
     @PostMapping
-    public ResponseEntity<Comercio> registrarComercio(@Valid @RequestBody ComercioRequest request) {
+    public ResponseEntity<Comercio> registrarComercio(@RequestBody ComercioRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(comercioService.registrarComercio(request));
     }
 
@@ -40,7 +39,7 @@ public class ComercioController {
     }
 
     @PostMapping("/{id}/productos")
-    public ResponseEntity<Producto> agregarProducto(@PathVariable Long id, @Valid @RequestBody ProductoRequest request) {
+    public ResponseEntity<Producto> agregarProducto(@PathVariable Long id, @RequestBody ProductoRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productoService.agregarProducto(id, request));
     }
 }
