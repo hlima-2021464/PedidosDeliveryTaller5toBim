@@ -7,21 +7,23 @@ import com.delivery.entity.Comercio;
 import com.delivery.entity.Producto;
 import com.delivery.service.ComercioService;
 import com.delivery.service.ProductoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/comercios")
-@RequiredArgsConstructor
 public class ComercioController {
 
     private final ComercioService comercioService;
     private final ProductoService productoService;
+
+    public ComercioController(ComercioService comercioService, ProductoService productoService) {
+        this.comercioService = comercioService;
+        this.productoService = productoService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Comercio>> listarComercios(@RequestParam(required = false) CategoriaComercio categoria) {
